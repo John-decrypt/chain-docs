@@ -1,19 +1,12 @@
 name: chain-docs
 
-on:
-  push:
-    branches: [master]
-  issue_comment:
-    types: [created]
+on: [push]
 jobs:
   scan:
     name: Scan
     runs-on: ubuntu-22.04
     if: >-
-      github.event_name == 'push' || github.event_name == 'pull_request' || (github.event.comment.body == '/staging' && 
-      (github.actor == 'allthatjazzleo' || github.actor == 'tomtau' || github.actor == 'lezzokafka' || github.actor == 'yihuang' || 
-      github.actor == 'calvinaco'  || github.actor == 'devashishdxt' || 
-      github.actor == 'leejw51crypto' || github.actor == 'cdc-Hitesh' || github.actor == 'crypto-matto' || github.actor == 'borischeuk-crypto'))
+      github.event_name == 'push' || github.event_name == 'pull_request' || github.event.comment.body == '/staging'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -66,23 +59,3 @@ jobs:
       - name: Check MASTER code
         uses: actions/checkout@v2
         if: github.event_name == 'push'
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - name: ci
-        env:
-          MASTER_AWS_ACCESS_KEY_ID: ${{ secrets.MASTER_AWS_ACCESS_KEY_ID }}
-          MASTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.MASTER_AWS_SECRET_ACCESS_KEY }}
-          MASTER_BUCKET_NAME: ${{ secrets.MASTER_BUCKET_NAME }}
-          MASTER_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.MASTER_CLOUDFRONT_DISTRIBUTION_ID }}
-          MASTER_REGION: ${{ secrets.MASTER_REGION }}
-          EVENT: ${{ github.event_name }}
-          STAGING_AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
-          STAGING_AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
-          STAGING_BUCKET_NAME: ${{ secrets.STAGING_BUCKET_NAME }}
-          STAGING_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.STAGING_CLOUDFRONT_DISTRIBUTION_ID }}
-          STAGING_REGION: ${{ secrets.STAGING_REGION }}
-        run: |
-          . ci/scripts/prepare
-          ci/scripts/build
-          ci/scripts/deploy
